@@ -1,0 +1,12 @@
+{
+    "create": {
+        "table1": {
+            "field1": "string",
+            "field2": "integer"
+        },
+        "table2": {
+            "field1": "string",
+            "field2": "integer"
+        }
+    }
+}
