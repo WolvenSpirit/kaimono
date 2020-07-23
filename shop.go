@@ -16,6 +16,10 @@ type join struct {
 	Table string
 	On    string
 }
+type insert struct {
+	Cols   []string
+	Values []interface{}
+}
 
 type requestBody struct {
 	Operation string
@@ -24,6 +28,7 @@ type requestBody struct {
 	Where     []string
 	Join      []join
 	Define    []string
+	Insert    insert
 }
 
 func shopMain(wr http.ResponseWriter, r *http.Request) {
@@ -32,10 +37,14 @@ func shopMain(wr http.ResponseWriter, r *http.Request) {
 		b, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			l.Error(err.Error())
+			wr.WriteHeader(http.StatusInternalServerError)
+			return
 		}
 		request := requestBody{}
 		if err = json.Unmarshal(b, &request); err != nil {
 			l.Error(err.Error())
+			wr.WriteHeader(http.StatusInternalServerError)
+			return
 		}
 		switch request.Operation {
 		case "select":
@@ -52,6 +61,8 @@ func shopMain(wr http.ResponseWriter, r *http.Request) {
 			rows, err := db.Query(query, args...)
 			if err != nil {
 				l.Error(err.Error())
+				wr.WriteHeader(http.StatusInternalServerError)
+				return
 			}
 			var responseBody []interface{}
 			for rows.Next() {
@@ -63,19 +74,41 @@ func shopMain(wr http.ResponseWriter, r *http.Request) {
 				}
 				responseBody = append(responseBody, response)
 			}
-
+			b, err := json.Marshal(&responseBody)
+			if err != nil {
+				l.Error(err.Error())
+				wr.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			wr.Write(b)
 		case "insert":
-
+			ib := sqlbuilder.NewInsertBuilder()
+			ib.InsertInto(request.Table[0])
+			ib.Cols(request.Insert.Cols...)
+			ib.Values(request.Insert.Values...)
+			query, args := ib.Build()
+			_, err := db.Exec(query, args)
+			if err != nil {
+				l.Error(err.Error())
+				wr.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			return
 		case "update":
 
 		case "delete":
 
 		case "create":
-			cb := sqlbuilder.CreateTableBuilder{}
+			cb := sqlbuilder.NewCreateTableBuilder()
 			cb.CreateTable(request.Table[0])
 			cb.IfNotExists()
 			cb.Define(request.Define...)
-			query := cb.String()
+			query, args := cb.Build()
+			if _, err := db.Exec(query, args); err != nil {
+				l.Error(err.Error())
+				wr.WriteHeader(http.StatusInternalServerError)
+				return
+			}
 		}
 	default:
 

@@ -34,6 +34,10 @@ func init() {
 	switch dbDriver {
 	case "postgres":
 		db, err = sql.Open(dbDriver, psqlConnectionURL)
+		if err := db.Ping(); err != nil {
+			l.Error(err.Error())
+		}
+		l.Info(fmt.Sprintf("%+v", db.Stats()))
 	case "mysql":
 
 	}
@@ -72,6 +76,6 @@ func main() {
 	s := listen()
 	l.Info(fmt.Sprintf("Starting server on %s with %s database.", s.Addr, dbDriver))
 	<-sigint
-	log.Println("Shutting down")
+	l.Info("Shutting down")
 	s.Shutdown(context.Background())
 }

@@ -5,3 +5,4 @@
 #### Environment variables:
 - SHOP_TLSCERT, SHOP_TLSKEY
 - SHOP_BIND_ADDR
+- LOG=* - print all logger info
