@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 
@@ -22,13 +23,14 @@ type insert struct {
 }
 
 type requestBody struct {
-	Operation string
-	Table     []string
-	Want      []string
-	Where     []string
-	Join      []join
-	Define    []string
-	Insert    insert
+	Operation        string
+	Table            []string
+	Want             []string
+	Where            []string
+	Join             []join
+	Define           []string
+	Insert           insert
+	UpdateAssignment string
 }
 
 func shopMain(wr http.ResponseWriter, r *http.Request) {
@@ -95,9 +97,26 @@ func shopMain(wr http.ResponseWriter, r *http.Request) {
 			}
 			return
 		case "update":
-
+			ib := sqlbuilder.NewUpdateBuilder()
+			ib.Update(request.Table[0])
+			ib.Set(request.UpdateAssignment)
+			ib.Where(request.Where...)
+			query, args := ib.Build()
+			if _, err := db.Exec(query, args); err != nil {
+				l.Error(err.Error())
+				wr.WriteHeader(http.StatusInternalServerError)
+				return
+			}
 		case "delete":
-
+			delb := sqlbuilder.NewDeleteBuilder()
+			delb.DeleteFrom(request.Table[0])
+			delb.Where(request.Where...)
+			query, args := delb.Build()
+			if _, err := db.Exec(query, args); err != nil {
+				l.Error(err.Error())
+				wr.WriteHeader(http.StatusInternalServerError)
+				return
+			}
 		case "create":
 			cb := sqlbuilder.NewCreateTableBuilder()
 			cb.CreateTable(request.Table[0])
@@ -111,6 +130,8 @@ func shopMain(wr http.ResponseWriter, r *http.Request) {
 			}
 		}
 	default:
-
+		l.Error(errors.New("unknown operation").Error())
+		wr.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 }
