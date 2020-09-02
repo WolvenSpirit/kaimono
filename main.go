@@ -11,12 +11,10 @@ import (
 	"os/signal"
 	"strings"
 
-	"github.com/azer/logger"
 	_ "github.com/lib/pq"
 )
 
 var db *sql.DB
-var l = logger.New("shop")
 var dbDriver string
 var psqlConnectionURL string
 
@@ -27,23 +25,23 @@ func init() {
 		os.Getenv("API_DB_PASS"),
 		"@", os.Getenv("API_DB_HOST"), ":",
 		os.Getenv("API_DB_PORT"), "/",
-		os.Getenv("API_DB_DBNAME"),
+		os.Getenv("API_DB_NAME"),
 		"?sslmode=", os.Getenv("API_PQ_SSLMODE")}, "")
-
+	log.Printf("Connection to DB via %s", psqlConnectionURL)
 	var err error
 	switch dbDriver {
 	case "postgres":
 		db, err = sql.Open(dbDriver, psqlConnectionURL)
 		if err := db.Ping(); err != nil {
-			l.Error(err.Error())
+			log.Println(err.Error())
 		}
-		l.Info(fmt.Sprintf("%+v", db.Stats()))
+		log.Println(fmt.Sprintf("%+v", db.Stats()))
 	case "mysql":
 
 	}
 
 	if err != nil {
-		l.Error(err.Error())
+		log.Println(err.Error())
 	}
 }
 
@@ -74,8 +72,8 @@ func main() {
 	sigint := make(chan os.Signal, 1)
 	signal.Notify(sigint, os.Interrupt)
 	s := listen()
-	l.Info(fmt.Sprintf("Starting server on %s with %s database.", s.Addr, dbDriver))
+	log.Println(fmt.Sprintf("Starting server on %s with %s database.", s.Addr, dbDriver))
 	<-sigint
-	l.Info("Shutting down")
+	log.Println("Shutting down")
 	s.Shutdown(context.Background())
 }

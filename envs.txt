@@ -1,0 +1,10 @@
+# Enter development config
+# Run source envs.txt
+# ----------------------------------
+export API_DB_DRIVER=postgres
+export API_DB_USER=postgres
+export API_DB_PASS=
+export API_DB_HOST=localhost
+export API_DB_PORT=5432
+export API_DB_NAME=test01
+export API_PQ_SSLMODE=disable
