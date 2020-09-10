@@ -11,15 +11,36 @@ import (
 	"os/signal"
 	"strings"
 
+	"github.com/huandu/go-sqlbuilder"
+
 	_ "github.com/lib/pq"
 )
 
 var db *sql.DB
 var dbDriver string
 var psqlConnectionURL string
+var dbflavor sqlbuilder.Flavor
+var authTable string
+var badWords []string
 
 func init() {
+	var err error
+	badWords, err = getBadWords()
+	if err != nil {
+		log.Println(err.Error())
+		os.Exit(1)
+	}
+	authTable = os.Getenv("AUTH_TABLE")
+	if authTable == "" {
+		authTable = "users"
+	}
 	dbDriver = os.Getenv("API_DB_DRIVER")
+	switch dbDriver {
+	case "postgres":
+		dbflavor = sqlbuilder.PostgreSQL
+	case "mysql":
+		dbflavor = sqlbuilder.MySQL
+	}
 	psqlConnectionURL = strings.Join([]string{"postgres://",
 		os.Getenv("API_DB_USER"), ":",
 		os.Getenv("API_DB_PASS"),
@@ -28,7 +49,6 @@ func init() {
 		os.Getenv("API_DB_NAME"),
 		"?sslmode=", os.Getenv("API_PQ_SSLMODE")}, "")
 	log.Printf("Connection to DB via %s", psqlConnectionURL)
-	var err error
 	switch dbDriver {
 	case "postgres":
 		db, err = sql.Open(dbDriver, psqlConnectionURL)
@@ -71,6 +91,10 @@ func main() {
 
 	sigint := make(chan os.Signal, 1)
 	signal.Notify(sigint, os.Interrupt)
+	if err := runMigrations(); err != nil {
+		log.Println(err.Error())
+		os.Exit(1)
+	}
 	s := listen()
 	log.Println(fmt.Sprintf("Starting server on %s with %s database.", s.Addr, dbDriver))
 	<-sigint

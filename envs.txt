@@ -1,6 +1,7 @@
 # Enter development config
 # Run source envs.txt
 # ----------------------------------
+export SHOP_BIND_ADDR=:8080
 export API_DB_DRIVER=postgres
 export API_DB_USER=postgres
 export API_DB_PASS=

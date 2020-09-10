@@ -53,7 +53,7 @@ func shopMain(wr http.ResponseWriter, r *http.Request) {
 		switch request.Operation {
 		case "select":
 			log.Printf("%+v", request)
-			sb := sqlbuilder.NewSelectBuilder()
+			sb := dbflavor.NewSelectBuilder()
 			sb.Select(request.Want...)
 			sb.From(request.Table...)
 			if len(request.Where) != 0 {
@@ -113,7 +113,7 @@ func shopMain(wr http.ResponseWriter, r *http.Request) {
 			}
 			wr.Write(b)
 		case "insert":
-			ib := sqlbuilder.PostgreSQL.NewInsertBuilder()
+			ib := dbflavor.NewInsertBuilder()
 			ib.InsertInto(request.Table[0])
 			ib.Cols(request.Insert.Cols...)
 			ib.Values(request.Insert.Values...)
@@ -127,7 +127,7 @@ func shopMain(wr http.ResponseWriter, r *http.Request) {
 			}
 			return
 		case "update":
-			ib := sqlbuilder.NewUpdateBuilder()
+			ib := dbflavor.NewUpdateBuilder()
 			ib.Update(request.Table[0])
 			ib.Set(request.UpdateAssignment)
 			ib.Where(request.Where...)
@@ -138,7 +138,7 @@ func shopMain(wr http.ResponseWriter, r *http.Request) {
 				return
 			}
 		case "delete":
-			delb := sqlbuilder.NewDeleteBuilder()
+			delb := dbflavor.NewDeleteBuilder()
 			delb.DeleteFrom(request.Table[0])
 			delb.Where(request.Where...)
 			query, args := delb.Build()
@@ -148,7 +148,7 @@ func shopMain(wr http.ResponseWriter, r *http.Request) {
 				return
 			}
 		case "create":
-			cb := sqlbuilder.NewCreateTableBuilder()
+			cb := dbflavor.NewCreateTableBuilder()
 			cb.SetFlavor(sqlbuilder.PostgreSQL)
 			cb = cb.CreateTable(request.Table[0]).IfNotExists()
 			for _, v := range request.Define {
