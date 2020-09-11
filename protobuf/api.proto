@@ -1,0 +1,54 @@
+
+service ApiService {
+    rpc Login(LoginRequest) returns(AuthResponse);
+    rpc Register(RegistrationRequest) returns (AuthResponse);
+    //---------------------------------------------
+    rpc Select(RequestBody) returns (ResponseBody);
+    rpc Insert(RequestBody) returns (ResponseBody);
+    rpc Update(RequestBody) returns (ResponseBody);
+    rpc Delete(RequestBody) returns (ResponseBody);
+    rpc Create(RequestBody) returns (ResponseBody);
+}
+
+message LoginRequest {
+    required string Email  = 1;
+    required string Password  = 2;
+}
+
+message AuthResponse {
+    required int32 Code  = 1;
+    optional string Message  = 2;
+    optional string Token = 3;
+}
+
+message RegistrationRequest {
+    required string Email  = 1;
+    required string Password  = 2;
+}
+
+message join {
+	required string Table = 1; 
+	required string On = 2;    
+}
+
+message insert {
+	repeated string Cols = 1;   
+	repeated bytes Values = 2; 
+}
+
+message RequestBody {
+	required string Operation = 1;
+	repeated string Table = 2;
+    repeated string Want = 3;             
+    repeated string Where = 4;            
+	repeated join Join = 5;            
+	repeated string Define = 6;           
+	optional insert Insert = 7;           
+    optional string UpdateAssignment = 8;
+    optional string token = 9; 
+}
+message ResponseBody {
+    required int32 StatusCode = 1;
+    optional bytes Payload = 2;
+    optional string Message = 3;
+}
