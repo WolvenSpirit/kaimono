@@ -1,8 +1,20 @@
-#### Generate self-signed certificates for localhost test use
-`openssl req  -nodes -new -x509  -keyout server.key -out server.cer`
-- after generating: `export SHOP_TLSCERT=server.cert SHOP_TLSKEY=server.key`
+# 買い物　（Kaimono）
+- This personal project is meant to be an easily extendable WebShop, Store and showcase the use of GRPC and WebGRPC in modern applications using Go language for server code and Angular for the WebUI as a Single Page Application.
+
+My main goals with this project are:
+- Zero configuration and easy deployment using Docker
+- Integration with Stripe
+- Article builder UI
 
 #### Environment variables:
-- SHOP_TLSCERT, SHOP_TLSKEY
 - SHOP_BIND_ADDR
-- LOG=* - print all logger info
+- GRPC_ADDR
+- GRPC_PORT
+
+##### Update envs.txt then:
+- Run: `. envs.txt`
+
+### Example protoc generate:
+- cd to protobuf folder
+command explained:`grpc:kaimono` - refers to the package definition, without specifing go_out=plugins=grpc you do not get a gRPC server generated!
+- run: `protoc --proto_path= --go_out=plugins=grpc:kaimono kaimono.proto`

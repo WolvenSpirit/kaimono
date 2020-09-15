@@ -1,0 +1,12 @@
+
+GRPC_PORT: 8080
+GRPC_ADDR: "0.0.0.0"
+API_DB_DRIVER: "postgres"
+API_DB_PORT: 5432
+API_DB_HOST: "localhost"
+API_DB_NAME: "test01"
+API_DB_USER: "postgres"
+API_DB_PASS: "ookaminoki"
+API_PQ_SSLMODE: "disable"
+AUTH_TABLE: "users"
+SHOP_BIND_ADDR: ":8081"

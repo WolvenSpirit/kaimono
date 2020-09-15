@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package kaimono;
+
+service ApiService {
+    rpc Handshake(HandshakeRequest) returns (HandshakeResponse);
+    //AUTH---------------------------------------------
+    rpc Login(LoginRequest) returns(AuthResponse);
+    rpc Register(RegistrationRequest) returns (AuthResponse);
+    //CRUD---------------------------------------------
+    rpc Select(RequestBody) returns (ResponseBody);
+    rpc Insert(RequestBody) returns (ResponseBody);
+    rpc Update(RequestBody) returns (ResponseBody);
+    rpc Delete(RequestBody) returns (ResponseBody);
+    rpc Create(RequestBody) returns (ResponseBody);
+    //RETRIEVE---------------------------------------------
+    rpc PublicResources(ResourceRequest) returns(ResourceOverviewResponse);
+    rpc PrivateResources(ResourceRequest) returns(ResourceOverviewResponse);
+}
+
+message HandshakeRequest {
+}
+message HandshakeResponse {
+    bool ClaimMode = 1;
+}
+// Uses token to authenticate for private resources retrieval
+message ResourceRequest{
+     string Token = 1;
+}
+message ResourceOverviewResponse{
+    bytes Resources = 1;
+}
+message LoginRequest {
+     string Email  = 1;
+     string Password  = 2;
+}
+
+message AuthResponse {
+     int32 Code  = 1;
+     string Message  = 2;
+     string Token = 3;
+}
+
+message RegistrationRequest {
+     string Email  = 1;
+     string Password  = 2;
+}
+
+message join {
+	 string Table = 1; 
+	 string On = 2;    
+}
+
+message insert {
+	repeated string Cols = 1;   
+	repeated bytes Values = 2; 
+}
+
+message RequestBody {
+	 string Operation = 1;
+	repeated string Table = 2;
+    repeated string Want = 3;             
+    repeated string Where = 4;            
+	repeated join Join = 5;            
+	repeated string Define = 6;           
+	 insert Insert = 7;           
+     string UpdateAssignment = 8;
+     string token = 9; 
+     string public = 10;
+}
+message ResponseBody {
+     int32 StatusCode = 1;
+     bytes Payload = 2;
+     string Message = 3;
+}
+message ConnectDatabaseRequest {
+     string Driver = 1;
+     string Host = 2;
+     string Port = 3;
+     string DbName = 4;
+     string User = 5;
+     string Password = 6;
+     string SslMode = 7;
+}
+message ConnectDatabaseResponse {
+     int32 DatabaseRequestIndex = 1;
+}
