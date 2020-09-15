@@ -17,7 +17,12 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
 import {MatInputModule} from '@angular/material/input';
 import {MatMenuModule} from '@angular/material/menu';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { AdminModule } from './admin/admin.module';
+import { LandingComponent } from './landing/landing.component';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import { AboutComponent } from './about/about.component';
+
 
 
 
@@ -25,11 +30,14 @@ import { HttpClient } from '@angular/common/http';
 @NgModule({
   declarations: [
     AppComponent,
-    MainviewComponent
+    MainviewComponent,
+    LandingComponent,
+    AboutComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule,
     BrowserAnimationsModule,
     MatButtonModule,
     MatBadgeModule,
@@ -43,7 +51,8 @@ import { HttpClient } from '@angular/common/http';
     MatIconModule,
     MatInputModule,
     MatMenuModule,
-    HttpClient
+    AdminModule,
+    MatToolbarModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

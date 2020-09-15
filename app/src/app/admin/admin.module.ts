@@ -14,10 +14,12 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
 import {MatInputModule} from '@angular/material/input';
 import {MatMenuModule} from '@angular/material/menu';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
 
 
 @NgModule({
-  declarations: [CreateComponent],
+  declarations: [CreateComponent, LoginComponent, RegisterComponent],
   imports: [
     CommonModule,
     AdminRoutingModule,

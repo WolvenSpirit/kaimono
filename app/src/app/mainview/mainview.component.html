@@ -1,1 +1,17 @@
-<p>mainview works!</p>
+<mat-toolbar color="primary" style="display: flex;background:rgba(59, 8, 59, 0.678);">
+    <span style="flex:1;"></span>
+    <button class="poiret" mat-stroked-button>WHO I AM</button>
+    <span style="flex:1;"></span>
+    <span style="" class="poiret">{{title}}</span>
+    <span style="flex:1;"></span>
+    <button *ngIf="api.claimMode" color="primary" class="poiret" mat-fab>
+        Register
+    </button>&nbsp;
+    <button class="poiret" color="primary" mat-fab>
+        Login
+    </button>
+    <span style="flex:1;"></span>
+</mat-toolbar>
+<div class="container">
+    <router-outlet></router-outlet>
+</div>
