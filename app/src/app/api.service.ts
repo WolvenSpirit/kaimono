@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AppConfig } from './config';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 const { HandshakeRequest,HandshakeResponse,ResourceRequest,ResourceOverviewResponse,LoginRequest,AuthResponse,RegistrationRequest,join,insert,RequestBody,ResponseBody } = require("./proto/kaimono_pb");
-const { ApiServiceClient } = require("./proto/kaimono_grpc_web_pb");
+const { ApiServiceClient } =  require("./proto/kaimono_grpc_web_pb.js");
 export { HandshakeRequest,HandshakeResponse,ResourceRequest,ResourceOverviewResponse,LoginRequest,AuthResponse,RegistrationRequest,join,insert,RequestBody,ResponseBody };
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,7 @@ export class ApiService {
   public config:AppConfig;
   constructor(private http:HttpClient) {
     this.config = new AppConfig();
-    this.kaimonoClient = new ApiServiceClient(this.config.api_url);
+    this.kaimonoClient = new ApiServiceClient("http://localhost:15001");
     this.handshake()
   }
    create(request) {
@@ -55,7 +55,7 @@ export class ApiService {
     let h = new HandshakeRequest();
     this.kaimonoClient.handshake(h,{},(e,r)=>{
       if(!e) {
-        this.claimMode = r.getClaimMode()
+        this.claimMode = r.getClaimmode()
         console.log(this.claimMode)
       } else {
         console.log(e)

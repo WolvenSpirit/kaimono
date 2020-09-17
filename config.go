@@ -31,7 +31,7 @@ type YmlConfig struct {
 	DBHost      string `yaml:"API_DB_HOST" env-default:"localhost"`
 	DBName      string `yaml:"API_DB_NAME" env-default:"postgres"`
 	DBUser      string `yaml:"API_DB_USER" env-default:"postgres"`
-	DBPassword  string `yaml:"API_DB_PASS" env-default:""`
+	DBPassword  string `yaml:"API_DB_PASS" env-default:"12345"`
 	DBPqSslMode string `yaml:"API_PQ_SSLMODE" env-default:"disable"`
 	AuthTable   string `env:"AUTH_TABLE" env-default:"users"`
 }

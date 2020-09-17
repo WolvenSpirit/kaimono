@@ -1,0 +1,49 @@
+version: "3.3"
+
+services: 
+
+  envoy:
+    image: envoyproxy/envoy:v1.11.2
+    networks:
+      - api
+    ports: 
+      - "15001:15001"
+      - 15000:15000
+    volumes:
+      - ./envoy:/etc/envoy
+    #  - /mnt/config/letsencrypt:/certs
+    links:
+      - kaimono_api
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role==worker
+      update_config:
+        parallelism: 1
+        delay: 10s
+
+  kaimono_api:
+    image: kaimono:latest
+  # env_file: kaimono.env
+    networks: 
+      - pg
+      - api
+    links:
+      - postgres
+    ports:
+      - 8080:8080
+  
+  postgres:
+    image: postgres:13
+    #ports:
+    #  - 5432:5432
+    networks:
+      - pg
+    environment:
+      POSTGRES_PASSWORD: 12345
+
+networks:
+  api:
+  pg:

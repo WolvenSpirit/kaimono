@@ -1,5 +1,7 @@
 module github.com/WolvenSpirit/kaimono
 
+go 1.15
+
 require (
 	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f // indirect
 	github.com/golang/protobuf v1.4.2

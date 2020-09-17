@@ -2,7 +2,6 @@ package main
 
 import (
 	//"google.golang.org/genproto/googleapis/api"
-	"net/http"
 
 	"google.golang.org/grpc"
 
@@ -17,7 +16,6 @@ import (
 
 	"github.com/WolvenSpirit/kaimono/protobuf/kaimono"
 	"github.com/huandu/go-sqlbuilder"
-	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	_ "github.com/lib/pq"
 )
 
@@ -101,19 +99,11 @@ func listenGRPC() *grpc.Server {
 	}
 	apiServer := apiServiceServer{}
 	s := grpc.NewServer()
+
 	kaimono.RegisterApiServiceServer(s, apiServer)
 	go func() {
 		s.Serve(listener)
 	}()
-	// Listen also on HTTP
-	wrappedgrpc := grpcweb.WrapServer(s)
-	httpServer := http.Server{Addr: yml.ServerAddress}
-	httpServer.Handler = http.HandlerFunc(func(wr http.ResponseWriter, r *http.Request) {
-		if wrappedgrpc.IsGrpcWebRequest(r) {
-			wrappedgrpc.ServeHTTP(wr, r)
-		}
-		http.DefaultServeMux.ServeHTTP(wr, r)
-	})
 	return s
 }
 
@@ -125,10 +115,10 @@ func main() {
 		log.Println(err.Error())
 		os.Exit(1)
 	}
-	s := listenGRPC()
+	grpcServer := listenGRPC()
 	log.Println(fmt.Sprintf("Starting server with %s database.", dbDriver))
 	<-sigint
 	log.Println("Shutting down")
-	s.GracefulStop()
+	grpcServer.GracefulStop()
 	db.Close()
 }
